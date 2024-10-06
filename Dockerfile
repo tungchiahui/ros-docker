@@ -36,10 +36,13 @@ RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o 
 RUN apt-get update && apt-get install -y \
     ros-jazzy-desktop \
     ros-dev-tools \
+    ros-jazzy-xacro \
+    ros-jazzy-joint-state-publisher \
+    ros-jazzy-joint-state-publisher-gui \
     && rm -rf /var/lib/apt/lists/*
 
 # 安装ROS1 Noetic
-# 添加ROS for Jammy的PPA (noble)
+# 添加ROS for Noble的PPA
 RUN add-apt-repository ppa:ros-for-jammy/noble
 
 # 更新包列表并安装ROS Noetic desktop full
