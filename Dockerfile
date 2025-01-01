@@ -39,6 +39,10 @@ RUN apt-get update && apt-get install -y \
     ros-jazzy-xacro \
     ros-jazzy-joint-state-publisher \
     ros-jazzy-joint-state-publisher-gui \
+    ros-jazzy-ros-gz \
+    ros-jazzy-diagnostic-updater \
+    libpcap-dev \
+    python3-colcon-common-extensions \
     && rm -rf /var/lib/apt/lists/*
 
 # 安装ROS1 Noetic
@@ -53,6 +57,13 @@ RUN apt-get update && apt-get install -y \
 # 添加自定义ROS环境切换到.bashrc
 RUN echo 'function env_ros_noetic() { source /opt/ros/noetic/setup.bash; echo "ROS Noetic environment sourced."; }' >> /root/.bashrc \
     && echo 'function env_ros_jazzy() { source /opt/ros/jazzy/setup.bash; echo "ROS Jazzy environment sourced."; }' >> /root/.bashrc
+
+# 启用NVIDIA显卡支持（仅当使用NVIDIA显卡时）
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES all
+
+# 设置QT的显示平台为xcb
+# ENV QT_QPA_PLATFORM=xcb
 
 # 启动时默认进入bash shell
 CMD ["bash"]
