@@ -1,12 +1,11 @@
-# 使用Ubuntu 22.04作为基础镜像
-FROM ubuntu:22.04
+# 使用Ubuntu 24.04作为基础镜像
+FROM ubuntu:24.04
 
 # 设置环境变量以防止交互安装
 ENV DEBIAN_FRONTEND=noninteractive
 
-# 替换为北京外国语大学的D镜像源
-RUN sed -i 's|http://archive.ubuntu.com/ubuntu/|http://mirrors.bfsu.edu.cn/ubuntu/|g' /etc/apt/sources.list && \
-    sed -i 's|http://security.ubuntu.com/ubuntu/|http://mirrors.bfsu.edu.cn/ubuntu/|g' /etc/apt/sources.list
+# 替换为北京外国语大学的DEB822格式镜像源
+RUN sed -i 's|http://archive.ubuntu.com/ubuntu/|http://mirrors.bfsu.edu.cn/ubuntu/|g' /etc/apt/sources.list.d/ubuntu.sources
 
 # 更新包管理器，安装必要工具（locales, software-properties-common, curl, gnupg2）
 RUN apt-get update && apt-get install -y \
@@ -15,7 +14,6 @@ RUN apt-get update && apt-get install -y \
     curl \
     gnupg2 \
     lsb-release \
-    usbutils \
     && rm -rf /var/lib/apt/lists/*
 
 # 生成和设置en_US.UTF-8 locale
@@ -32,31 +30,29 @@ RUN add-apt-repository universe
 
 # 添加ROS 2的密钥和源
 RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] https://mirrors.bfsu.edu.cn/ros2/ubuntu jammy main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] https://mirrors.bfsu.edu.cn/ros2/ubuntu noble main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null
 
-# 更新包管理器并安装ROS 2 Humble desktop
+# 更新包管理器并安装ROS 2 Jazzy desktop
 RUN apt-get update && apt-get install -y \
-    ros-humble-desktop \
+    ros-jazzy-desktop \
     ros-dev-tools \
-    ros-humble-xacro \
-    ros-humble-joint-state-publisher \
-    ros-humble-joint-state-publisher-gui \
-    ros-humble-ros-gz \
-    ros-humble-diagnostic-updater \
-    ros-humble-navigation2 \
-    ros-humble-nav2-bringup \
-    ros-humble-slam-toolbox \
-    ros-humble-cartographer \
-    ros-humble-cartographer-ros \
-    ros-humble-asio-cmake-module \
-    ros-humble-serial-driver \
+    ros-jazzy-xacro \
+    ros-jazzy-joint-state-publisher \
+    ros-jazzy-joint-state-publisher-gui \
+    ros-jazzy-ros-gz \
+    ros-jazzy-diagnostic-updater \
+    ros-jazzy-navigation2 \
+    ros-jazzy-nav2-bringup \
+    ros-jazzy-slam-toolbox \
+    ros-jazzy-cartographer \
+    ros-jazzy-cartographer-ros \
     libpcap-dev \
     python3-colcon-common-extensions \
     && rm -rf /var/lib/apt/lists/*
 
 # 安装ROS1 Noetic
 # 添加ROS for Noble的PPA
-RUN add-apt-repository ppa:ros-for-jammy/noetic
+RUN add-apt-repository ppa:ros-for-jammy/noble
 
 # 更新包列表并安装ROS Noetic desktop full
 RUN apt-get update && apt-get install -y \
@@ -65,7 +61,7 @@ RUN apt-get update && apt-get install -y \
 
 # 添加自定义ROS环境切换到.bashrc
 RUN echo 'function env_ros_noetic() { source /opt/ros/noetic/setup.bash; echo "ROS Noetic environment sourced."; }' >> /root/.bashrc \
-    && echo 'function env_ros_humble() { source /opt/ros/humble/setup.bash; echo "ROS humble environment sourced."; }' >> /root/.bashrc
+    && echo 'function env_ros_jazzy() { source /opt/ros/jazzy/setup.bash; echo "ROS Jazzy environment sourced."; }' >> /root/.bashrc
 
 # 启用NVIDIA显卡支持（仅当使用NVIDIA显卡时）
 ENV NVIDIA_VISIBLE_DEVICES all

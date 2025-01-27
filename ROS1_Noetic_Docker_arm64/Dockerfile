@@ -1,0 +1,87 @@
+# 使用Ubuntu 20.04 ARM64基础镜像
+FROM arm64v8/ubuntu:focal
+
+# 设置非交互式安装以避免tzdata提示
+ENV DEBIAN_FRONTEND=noninteractive
+
+# 替换为北京外国语大学Ubuntu镜像源（ARM64专用）
+RUN sed -i 's|http://ports.ubuntu.com/ubuntu-ports|http://mirrors.bfsu.edu.cn/ubuntu-ports|g' /etc/apt/sources.list
+
+# 安装基础工具
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg2 \
+    lsb-release \
+    software-properties-common \
+    build-essential \
+    curl \
+    vim \
+    git \
+    usbutils \
+    libusb-1.0-0-dev \
+    udev \
+    hwinfo \
+    libpcl-dev \
+    libeigen3-dev \
+    libboost-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# 配置终端颜色和提示符
+RUN git clone https://github.com/trapd00r/LS_COLORS /tmp/LS_COLORS && \
+    ln -s /tmp/LS_COLORS/LS_COLORS /root/.dircolors && \
+    echo 'eval $(dircolors -b /root/.dircolors)' >> /root/.bashrc && \
+    # 启用bash颜色提示符
+    sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /root/.bashrc && \
+    # 自定义PS1（带颜色的提示符）
+    echo 'export PS1="\[\033[1;36m\]\u@\h\[\033[00m\]:\[\033[1;34m\]\w\[\033[00m\]\$ "' >> /root/.bashrc && \
+    # 给ls、grep等命令添加别名
+    echo "alias ls='ls --color=auto'" >> /root/.bashrc && \
+    echo "alias grep='grep --color=auto'" >> /root/.bashrc && \
+    echo "alias ll='ls -alFh --color=auto'" >> /root/.bashrc && \
+    # 清理临时文件
+    rm -rf /tmp/LS_COLORS
+
+
+# 添加ROS仓库密钥
+RUN sh -c 'echo "deb [arch=$(dpkg --print-architecture)] http://mirrors.bfsu.edu.cn/ros/ubuntu/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+RUN curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -
+
+# 安装ROS Noetic桌面完整版
+RUN apt-get update && apt-get install -y \
+    ros-noetic-desktop-full \
+    ros-noetic-rosmon \
+    ros-noetic-rqt-graph \
+    ros-noetic-rqt-image-view \
+    ros-noetic-rqt-reconfigure \
+    ros-noetic-urg-node \
+    ros-noetic-lms1xx \
+    ros-noetic-velodyne \
+    ros-noetic-serial \
+    ros-noetic-navigation \
+    ros-noetic-slam-gmapping \
+    ros-noetic-moveit \
+    ros-noetic-joint-state-publisher \
+    ros-noetic-joint-state-publisher-gui \
+    ros-noetic-pcl-ros \
+    ros-noetic-pcl-conversions \
+    ros-noetic-gazebo-ros-pkgs \
+    ros-noetic-turtlebot3 \
+    ros-noetic-xacro \             
+    ros-noetic-diagnostic-updater \
+    libpcap-dev \
+    python3-rosdep \
+    python3-rosinstall \
+    python3-rosinstall-generator \
+    python3-wstool \
+    && rm -rf /var/lib/apt/lists/*
+
+# 配置rosdep使用镜像源
+# ENV ROSDISTRO_INDEX_URL https://mirrors.bfsu.edu.cn/ros/rosdistro/master/index-v4.yaml
+RUN rosdep init && rosdep update
+
+
+# 设置环境变量
+RUN echo "source /opt/ros/noetic/setup.bash" >> /root/.bashrc
+
+
+CMD ["/bin/bash"]
