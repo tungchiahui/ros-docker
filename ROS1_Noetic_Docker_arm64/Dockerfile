@@ -76,7 +76,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # 配置rosdep使用镜像源
-# ENV ROSDISTRO_INDEX_URL https://mirrors.bfsu.edu.cn/ros/rosdistro/master/index-v4.yaml
+# ENV ROSDISTRO_INDEX_URL https://mirrors.bfsu.edu.cn/rosdistro/index-v4.yaml
 RUN rosdep init && rosdep update
 
 
