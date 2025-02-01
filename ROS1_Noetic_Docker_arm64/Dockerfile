@@ -27,11 +27,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # 配置终端颜色和提示符
-RUN git clone https://github.com/trapd00r/LS_COLORS /tmp/LS_COLORS && \
-    ln -s /tmp/LS_COLORS/LS_COLORS /root/.dircolors && \
-    echo 'eval $(dircolors -b /root/.dircolors)' >> /root/.bashrc && \
-    # 启用bash颜色提示符
-    sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /root/.bashrc && \
+RUN sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /root/.bashrc && \
     # 自定义PS1（带颜色的提示符）
     echo 'export PS1="\[\033[1;36m\]\u@\h\[\033[00m\]:\[\033[1;34m\]\w\[\033[00m\]\$ "' >> /root/.bashrc && \
     # 给ls、grep等命令添加别名
@@ -49,26 +45,31 @@ RUN curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt
 # 安装ROS Noetic桌面完整版
 RUN apt-get update && apt-get install -y \
     ros-noetic-desktop-full \
-    ros-noetic-rosmon \
-    ros-noetic-rqt-graph \
-    ros-noetic-rqt-image-view \
-    ros-noetic-rqt-reconfigure \
-    ros-noetic-urg-node \
-    ros-noetic-lms1xx \
-    ros-noetic-velodyne \
-    ros-noetic-serial \
-    ros-noetic-navigation \
-    ros-noetic-slam-gmapping \
-    ros-noetic-moveit \
-    ros-noetic-joint-state-publisher \
-    ros-noetic-joint-state-publisher-gui \
-    ros-noetic-pcl-ros \
-    ros-noetic-pcl-conversions \
-    ros-noetic-gazebo-ros-pkgs \
-    ros-noetic-turtlebot3 \
-    ros-noetic-xacro \             
-    ros-noetic-diagnostic-updater \
-    libpcap-dev \
+    ros-noetic-rqt \
+    ros-noetic-rqt-common-plugins \
+    ros-noetic-rviz \
+    liburdfdom-tools \
+    
+    # ros-noetic-rosmon \
+    # ros-noetic-rqt-graph \
+    # ros-noetic-rqt-image-view \
+    # ros-noetic-rqt-reconfigure \
+    # ros-noetic-urg-node \
+    # ros-noetic-lms1xx \
+    # ros-noetic-velodyne \
+    # ros-noetic-serial \
+    # ros-noetic-navigation \
+    # ros-noetic-slam-gmapping \
+    # ros-noetic-moveit \
+    # ros-noetic-joint-state-publisher \
+    # ros-noetic-joint-state-publisher-gui \
+    # ros-noetic-pcl-ros \
+    # ros-noetic-pcl-conversions \
+    # ros-noetic-gazebo-ros-pkgs \
+    # ros-noetic-turtlebot3 \
+    # ros-noetic-xacro \             
+    # ros-noetic-diagnostic-updater \
+    # libpcap-dev \
     python3-rosdep \
     python3-rosinstall \
     python3-rosinstall-generator \
@@ -76,12 +77,14 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # 配置rosdep使用镜像源
-# ENV ROSDISTRO_INDEX_URL https://mirrors.bfsu.edu.cn/rosdistro/index-v4.yaml
+RUN echo "# 配置ROS1环境" >> /root/.bashrc
+RUN echo 'export ROSDISTRO_INDEX_URL=https://mirrors.bfsu.edu.cn/rosdistro/index-v4.yaml' >> /root/.bashrc
 RUN rosdep init && rosdep update
 
 
 # 设置环境变量
 RUN echo "source /opt/ros/noetic/setup.bash" >> /root/.bashrc
-
+RUN echo "export ROS_MASTER_URI=http://192.168.31.10:11311" >> /root/.bashrc
+RUN echo "export ROS_HOSTNAME=192.168.31.10" >> /root/.bashrc
 
 CMD ["/bin/bash"]
