@@ -18,7 +18,6 @@ RUN apt-get update && apt-get install -y \
     vim \
     git \
     usbutils \
-    libusb-1.0-0-dev \
     udev \
     hwinfo \
     libpcl-dev \
@@ -48,28 +47,18 @@ RUN apt-get update && apt-get install -y \
     ros-noetic-rqt \
     ros-noetic-rqt-common-plugins \
     ros-noetic-rviz \
+    ros-noetic-joint-state-publisher \
+    ros-noetic-joint-state-publisher-gui \
+    ros-noetic-xacro \
     liburdfdom-tools \
-    
-    # ros-noetic-rosmon \
-    # ros-noetic-rqt-graph \
-    # ros-noetic-rqt-image-view \
-    # ros-noetic-rqt-reconfigure \
-    # ros-noetic-urg-node \
-    # ros-noetic-lms1xx \
-    # ros-noetic-velodyne \
-    # ros-noetic-serial \
-    # ros-noetic-navigation \
-    # ros-noetic-slam-gmapping \
-    # ros-noetic-moveit \
-    # ros-noetic-joint-state-publisher \
-    # ros-noetic-joint-state-publisher-gui \
-    # ros-noetic-pcl-ros \
-    # ros-noetic-pcl-conversions \
-    # ros-noetic-gazebo-ros-pkgs \
-    # ros-noetic-turtlebot3 \
-    # ros-noetic-xacro \             
-    # ros-noetic-diagnostic-updater \
-    # libpcap-dev \
+    ros-noetic-gazebo-ros-pkgs \
+    gazebo11 \
+    libgazebo11-dev \
+    ros-noetic-gmapping \
+    ros-noetic-map-server \
+    ros-noetic-navigation \
+    ros-noetic-moveit \
+    ros-noetic-serial \
     python3-rosdep \
     python3-rosinstall \
     python3-rosinstall-generator \
@@ -78,13 +67,15 @@ RUN apt-get update && apt-get install -y \
 
 # 配置rosdep使用镜像源
 RUN echo "# 配置ROS1环境" >> /root/.bashrc
+RUN rosdep init
 RUN echo 'export ROSDISTRO_INDEX_URL=https://mirrors.bfsu.edu.cn/rosdistro/index-v4.yaml' >> /root/.bashrc
-RUN rosdep init && rosdep update
+RUN rosdep update
 
 
 # 设置环境变量
 RUN echo "source /opt/ros/noetic/setup.bash" >> /root/.bashrc
 RUN echo "export ROS_MASTER_URI=http://192.168.31.10:11311" >> /root/.bashrc
 RUN echo "export ROS_HOSTNAME=192.168.31.10" >> /root/.bashrc
+RUN echo "export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/home/tungchiahui/UserFloder/MySource/ROS_WS/gazebo_models:/home/tungchiahui/UserFloder/MySource/ROS_WS/ign_models" >> /root/.bashrc
 
 CMD ["/bin/bash"]
