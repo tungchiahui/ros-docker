@@ -1,11 +1,11 @@
 # 使用Ubuntu 20.04 ARM64基础镜像
-FROM arm64v8/ubuntu:focal
+FROM ubuntu:20.04
 
 # 设置非交互式安装以避免tzdata提示
 ENV DEBIAN_FRONTEND=noninteractive
 
-# 替换为北京外国语大学Ubuntu镜像源（ARM64专用）
-RUN sed -i 's|http://ports.ubuntu.com/ubuntu-ports|http://mirrors.bfsu.edu.cn/ubuntu-ports|g' /etc/apt/sources.list
+# 替换为北京外国语大学Ubuntu镜像源（AMD64专用）
+RUN sed -i 's|http://archive.ubuntu.com/ubuntu|http://mirrors.bfsu.edu.cn/ubuntu|g' /etc/apt/sources.list
 
 # 安装基础工具
 RUN apt-get update && apt-get install -y \
@@ -75,8 +75,8 @@ RUN rosdep update
 
 # 设置环境变量
 RUN echo "source /opt/ros/noetic/setup.bash" >> /root/.bashrc
-RUN echo "export ROS_MASTER_URI=http://192.168.31.10:11311" >> /root/.bashrc
-RUN echo "export ROS_HOSTNAME=192.168.31.10" >> /root/.bashrc
+RUN echo "export ROS_MASTER_URI=http://192.168.31.5:11311" >> /root/.bashrc
+RUN echo "export ROS_HOSTNAME=192.168.31.5" >> /root/.bashrc
 RUN echo "export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/home/tungchiahui/UserFloder/MySource/ROS_WS/gazebo_models:/home/tungchiahui/UserFloder/MySource/ROS_WS/ign_models" >> /root/.bashrc
 
 CMD ["/bin/bash"]
