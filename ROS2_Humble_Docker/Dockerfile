@@ -16,7 +16,21 @@ RUN apt-get update && apt-get install -y \
     gnupg2 \
     lsb-release \
     usbutils \
+    udev \
+    hwinfo \
     && rm -rf /var/lib/apt/lists/*
+
+# 配置终端颜色和提示符
+RUN sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /root/.bashrc && \
+    # 自定义PS1（带颜色的提示符）
+    echo 'export PS1="\[\033[1;36m\]\u@\h\[\033[00m\]:\[\033[1;34m\]\w\[\033[00m\]\$ "' >> /root/.bashrc && \
+    # 给ls、grep等命令添加别名
+    echo "alias ls='ls --color=auto'" >> /root/.bashrc && \
+    echo "alias grep='grep --color=auto'" >> /root/.bashrc && \
+    echo "alias ll='ls -alFh --color=auto'" >> /root/.bashrc && \
+    # 清理临时文件
+    rm -rf /tmp/LS_COLORS
+
 
 # 生成和设置en_US.UTF-8 locale
 RUN locale-gen en_US en_US.UTF-8 && \
@@ -50,22 +64,12 @@ RUN apt-get update && apt-get install -y \
     ros-humble-cartographer-ros \
     ros-humble-asio-cmake-module \
     ros-humble-serial-driver \
+    ros-humble-pcl-ros \
+    libpcl-dev \
+    libeigen3-dev \
     libpcap-dev \
     python3-colcon-common-extensions \
     && rm -rf /var/lib/apt/lists/*
-
-# 安装ROS1 Noetic
-# 添加ROS for Noble的PPA
-RUN add-apt-repository ppa:ros-for-jammy/noetic
-
-# 更新包列表并安装ROS Noetic desktop full
-RUN apt-get update && apt-get install -y \
-    ros-noetic-desktop-full \
-    && rm -rf /var/lib/apt/lists/*
-
-# 添加自定义ROS环境切换到.bashrc
-RUN echo 'function env_ros_noetic() { source /opt/ros/noetic/setup.bash; echo "ROS Noetic environment sourced."; }' >> /root/.bashrc \
-    && echo 'function env_ros_humble() { source /opt/ros/humble/setup.bash; echo "ROS humble environment sourced."; }' >> /root/.bashrc
 
 # 启用NVIDIA显卡支持（仅当使用NVIDIA显卡时）
 ENV NVIDIA_VISIBLE_DEVICES all
@@ -73,6 +77,18 @@ ENV NVIDIA_DRIVER_CAPABILITIES all
 
 # 设置QT的显示平台为xcb
 # ENV QT_QPA_PLATFORM=xcb
+
+# 配置rosdep使用镜像源
+RUN echo "# 配置ROS2环境" >> /root/.bashrc
+RUN rosdep init
+RUN echo 'export ROSDISTRO_INDEX_URL=https://mirrors.bfsu.edu.cn/rosdistro/index-v4.yaml' >> /root/.bashrc
+RUN rosdep update
+
+# 设置环境变量
+RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc
+RUN echo "export ROS_DOMAIN_ID=6" >> /root/.bashrc
+RUN echo "export IGN_GAZEBO_RESOURCE_PATH=$IGN_GAZEBO_RESOURCE_PATH:/home/tungchiahui/UserFloder/MySource/ROS_WS/gazebo_models:/home/tungchiahui/UserFloder/MySource/ROS_WS/ign_models" >> /root/.bashrc
+
 
 # 启动时默认进入bash shell
 CMD ["bash"]
