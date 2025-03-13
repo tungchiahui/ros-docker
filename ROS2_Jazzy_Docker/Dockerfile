@@ -4,8 +4,12 @@ FROM ubuntu:24.04
 # 设置环境变量以防止交互安装
 ENV DEBIAN_FRONTEND=noninteractive
 
+# 先更新包列表并安装CA证书
+RUN apt-get update && apt-get install -y ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
 # 替换为北京外国语大学的DEB822格式镜像源
-RUN sed -i 's|http://archive.ubuntu.com/ubuntu/|http://mirrors.bfsu.edu.cn/ubuntu/|g' /etc/apt/sources.list.d/ubuntu.sources
+RUN sed -i 's|http://archive.ubuntu.com/ubuntu/|https://mirrors.bfsu.edu.cn/ubuntu/|g' /etc/apt/sources.list.d/ubuntu.sources
 
 # 更新包管理器，安装必要工具（locales, software-properties-common, curl, gnupg2）
 RUN apt-get update && apt-get install -y \

@@ -4,9 +4,13 @@ FROM ubuntu:22.04
 # 设置环境变量以防止交互安装
 ENV DEBIAN_FRONTEND=noninteractive
 
+# 先更新包列表并安装CA证书
+RUN apt-get update && apt-get install -y ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
 # 替换为北京外国语大学的D镜像源
-RUN sed -i 's|http://archive.ubuntu.com/ubuntu/|http://mirrors.bfsu.edu.cn/ubuntu/|g' /etc/apt/sources.list && \
-    sed -i 's|http://security.ubuntu.com/ubuntu/|http://mirrors.bfsu.edu.cn/ubuntu/|g' /etc/apt/sources.list
+RUN sed -i 's|http://archive.ubuntu.com/ubuntu/|https://mirrors.bfsu.edu.cn/ubuntu/|g' /etc/apt/sources.list && \
+    sed -i 's|http://security.ubuntu.com/ubuntu/|https://mirrors.bfsu.edu.cn/ubuntu/|g' /etc/apt/sources.list
 
 # 更新包管理器，安装必要工具（locales, software-properties-common, curl, gnupg2）
 RUN apt-get update && apt-get install -y \
@@ -71,6 +75,15 @@ RUN apt-get update && apt-get install -y \
     python3-colcon-common-extensions \
     && rm -rf /var/lib/apt/lists/*
 
+# 安装ROS1 Noetic
+# 添加ROS for Noble的PPA
+RUN add-apt-repository ppa:ros-for-jammy/noetic
+
+# 更新包列表并安装ROS Noetic desktop full
+RUN apt-get update && apt-get install -y \
+    ros-noetic-desktop-full \
+    && rm -rf /var/lib/apt/lists/*
+
 # 启用NVIDIA显卡支持（仅当使用NVIDIA显卡时）
 ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES all
@@ -89,6 +102,18 @@ RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc
 RUN echo "export ROS_DOMAIN_ID=6" >> /root/.bashrc
 RUN echo "export IGN_GAZEBO_RESOURCE_PATH=$IGN_GAZEBO_RESOURCE_PATH:/home/tungchiahui/UserFloder/MySource/ROS_WS/gazebo_models:/home/tungchiahui/UserFloder/MySource/ROS_WS/ign_models" >> /root/.bashrc
 
+RUN echo "# 配置ROS1环境" >> /root/.bashrc
+RUN echo "#source /opt/ros/noetic/setup.bash" >> /root/.bashrc
+RUN echo "export ROS_MASTER_URI=http://localhost:11311" >> /root/.bashrc
+RUN echo "export ROS_HOSTNAME=localhost" >> /root/.bashrc
+RUN echo "#export ROS_MASTER_URI=http://192.168.31.5:11311" >> /root/.bashrc
+RUN echo "#export ROS_HOSTNAME=192.168.31.5" >> /root/.bashrc
+RUN echo "export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/home/tungchiahui/UserFloder/MySource/ROS_WS/gazebo_models:/home/tungchiahui/UserFloder/MySource/ROS_WS/ign_models" >> /root/.bashrc
+
+# 添加自定义ROS环境切换到.bashrc
+RUN echo "# 配置ROS环境切换配置" >> /root/.bashrc
+RUN echo 'function env_ros_noetic() { source /opt/ros/noetic/setup.bash; echo "ROS Noetic environment sourced."; }' >> /root/.bashrc \
+    && echo 'function env_ros_humble() { source /opt/ros/humble/setup.bash; echo "ROS humble environment sourced."; }' >> /root/.bashrc
 
 # 启动时默认进入bash shell
 CMD ["bash"]

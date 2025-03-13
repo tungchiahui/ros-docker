@@ -4,8 +4,12 @@ FROM arm64v8/ubuntu:focal
 # 设置非交互式安装以避免tzdata提示
 ENV DEBIAN_FRONTEND=noninteractive
 
+# 先更新包列表并安装CA证书
+RUN apt-get update && apt-get install -y ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
 # 替换为北京外国语大学Ubuntu镜像源（ARM64专用）
-RUN sed -i 's|http://ports.ubuntu.com/ubuntu-ports|http://mirrors.bfsu.edu.cn/ubuntu-ports|g' /etc/apt/sources.list
+RUN sed -i 's|http://ports.ubuntu.com/ubuntu-ports|https://mirrors.bfsu.edu.cn/ubuntu-ports|g' /etc/apt/sources.list
 
 # 安装基础工具
 RUN apt-get update && apt-get install -y \
