@@ -1,4 +1,4 @@
-# 使用Ubuntu 20.04 ARM64基础镜像
+# 使用Ubuntu 20.04 AMD64基础镜像
 FROM ubuntu:20.04
 
 # 设置非交互式安装以避免tzdata提示
