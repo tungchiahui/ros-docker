@@ -72,11 +72,12 @@ RUN rosdep init
 RUN echo 'export ROSDISTRO_INDEX_URL=https://mirrors.bfsu.edu.cn/rosdistro/index-v4.yaml' >> /root/.bashrc
 RUN rosdep update
 
-
 # 设置环境变量
 RUN echo "source /opt/ros/noetic/setup.bash" >> /root/.bashrc
-RUN echo "export ROS_MASTER_URI=http://192.168.31.5:11311" >> /root/.bashrc
-RUN echo "export ROS_HOSTNAME=192.168.31.5" >> /root/.bashrc
+RUN echo "export ROS_MASTER_URI=http://localhost:11311" >> /root/.bashrc
+RUN echo "export ROS_HOSTNAME=localhost" >> /root/.bashrc
+RUN echo "#export ROS_MASTER_URI=http://192.168.31.5:11311" >> /root/.bashrc
+RUN echo "#export ROS_HOSTNAME=192.168.31.5" >> /root/.bashrc
 RUN echo "export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/home/tungchiahui/UserFloder/MySource/ROS_WS/gazebo_models:/home/tungchiahui/UserFloder/MySource/ROS_WS/ign_models" >> /root/.bashrc
 
 CMD ["/bin/bash"]
