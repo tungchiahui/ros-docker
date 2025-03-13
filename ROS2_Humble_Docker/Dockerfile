@@ -102,18 +102,5 @@ RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc
 RUN echo "export ROS_DOMAIN_ID=6" >> /root/.bashrc
 RUN echo "export IGN_GAZEBO_RESOURCE_PATH=$IGN_GAZEBO_RESOURCE_PATH:/home/tungchiahui/UserFloder/MySource/ROS_WS/gazebo_models:/home/tungchiahui/UserFloder/MySource/ROS_WS/ign_models" >> /root/.bashrc
 
-RUN echo "# 配置ROS1环境" >> /root/.bashrc
-RUN echo "#source /opt/ros/noetic/setup.bash" >> /root/.bashrc
-RUN echo "export ROS_MASTER_URI=http://localhost:11311" >> /root/.bashrc
-RUN echo "export ROS_HOSTNAME=localhost" >> /root/.bashrc
-RUN echo "#export ROS_MASTER_URI=http://192.168.31.5:11311" >> /root/.bashrc
-RUN echo "#export ROS_HOSTNAME=192.168.31.5" >> /root/.bashrc
-RUN echo "export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/home/tungchiahui/UserFloder/MySource/ROS_WS/gazebo_models:/home/tungchiahui/UserFloder/MySource/ROS_WS/ign_models" >> /root/.bashrc
-
-# 添加自定义ROS环境切换到.bashrc
-RUN echo "# 配置ROS环境切换配置" >> /root/.bashrc
-RUN echo 'function env_ros_noetic() { source /opt/ros/noetic/setup.bash; echo "ROS Noetic environment sourced."; }' >> /root/.bashrc \
-    && echo 'function env_ros_humble() { source /opt/ros/humble/setup.bash; echo "ROS humble environment sourced."; }' >> /root/.bashrc
-
 # 启动时默认进入bash shell
 CMD ["bash"]
