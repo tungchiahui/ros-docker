@@ -76,8 +76,8 @@ RUN apt-get update && apt-get install -y \
 
 
 # 启用NVIDIA显卡支持（仅当使用NVIDIA显卡时）
-ENV NVIDIA_VISIBLE_DEVICES all
-ENV NVIDIA_DRIVER_CAPABILITIES all
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=all
 
 # 设置QT的显示平台为xcb
 # ENV QT_QPA_PLATFORM=xcb

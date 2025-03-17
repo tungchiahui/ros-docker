@@ -70,6 +70,13 @@ RUN apt-get update && apt-get install -y \
     python3-wstool \
     && rm -rf /var/lib/apt/lists/*
 
+# 启用NVIDIA显卡支持（仅当使用NVIDIA显卡时）
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=all
+
+# 设置QT的显示平台为xcb
+# ENV QT_QPA_PLATFORM=xcb
+
 # 配置rosdep使用镜像源
 RUN echo "# 配置ROS1环境" >> /root/.bashrc
 RUN rosdep init
@@ -80,8 +87,6 @@ RUN rosdep update
 RUN echo "source /opt/ros/noetic/setup.bash" >> /root/.bashrc
 RUN echo "export ROS_MASTER_URI=http://localhost:11311" >> /root/.bashrc
 RUN echo "export ROS_HOSTNAME=localhost" >> /root/.bashrc
-RUN echo "#export ROS_MASTER_URI=http://192.168.31.5:11311" >> /root/.bashrc
-RUN echo "#export ROS_HOSTNAME=192.168.31.5" >> /root/.bashrc
 RUN echo "export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/home/tungchiahui/UserFloder/MySource/ROS_WS/gazebo_models:/home/tungchiahui/UserFloder/MySource/ROS_WS/ign_models" >> /root/.bashrc
 
 CMD ["/bin/bash"]
