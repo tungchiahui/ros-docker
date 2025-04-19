@@ -7,3 +7,41 @@ srepositories:
     type: git
     url: https://github.com/ros/joint_state_publisher.git
     version: ros2
+  ros_gz:
+    type: git
+    url: https://github.com/gazebosim/ros_gz.git
+    version: humble
+  diagnostic_updater:
+    type: git
+    url: https://github.com/ros/diagnostics.git
+    version: ros2-humble
+  navigation2:
+    type: git
+    url: https://github.com/ros-planning/navigation2.git
+    version: humble
+  slam_toolbox:
+    type: git
+    url: https://github.com/SteveMacenski/slam_toolbox.git
+    version: humble
+  cartographer:
+    type: git
+    url: 	https://github.com/ros2/cartographer.git
+    version: ros2
+  cartographer_ros:
+    type: git
+    url: 	https://github.com/ros2/cartographer_ros.git
+    version: ros2
+  serial_driver:
+    type: git
+    url: 	https://github.com/ros-drivers/transport_drivers.git
+    version: main
+  pcl_ros:
+    type: git
+    url: 	https://github.com/ros-perception/perception_pcl.git
+    version: ros2
+  vision_opencv:
+    type: git
+    url: 	https://github.com/ros-perception/vision_opencv.git
+    version: humble
+  
+
