@@ -27,6 +27,42 @@ repositories:
     type: git
     url: https://github.com/gazebo-release/gz_tools_vendor.git
     version: jazzy
+  gz_common_vendor:
+    type: git
+    url: https://github.com/gazebo-release/gz_common_vendor.git
+    version: jazzy
+  gz_fuel_tools_vendor:
+    type: git
+    url: https://github.com/gazebo-release/gz_fuel_tools_vendor.git
+    version: jazzy
+  gz_gui_vendor:
+    type: git
+    url: https://github.com/gazebo-release/gz_gui_vendor.git
+    version: jazzy
+  gz_plugin_vendor:
+    type: git
+    url: https://github.com/gazebo-release/gz_plugin_vendor.git
+    version: jazzy
+  gz_physics_vendor:
+    type: git
+    url: https://github.com/gazebo-release/gz_physics_vendor.git
+    version: jazzy
+  gz_rendering_vendor:
+    type: git
+    url: https://github.com/gazebo-release/gz_rendering_vendor.git
+    version: jazzy
+  gz_sensors_vendor:
+    type: git
+    url: https://github.com/gazebo-release/gz_sensors_vendor.git
+    version: jazzy
+  gz_dartsim_vendor:
+    type: git
+    url: https://github.com/gazebo-release/gz_dartsim_vendor.git
+    version: jazzy
+  gz_ogre_next_vendor:
+    type: git
+    url: https://github.com/gazebo-release/gz_ogre_next_vendor.git
+    version: jazzy
   sdformat_urdf:
     type: git
     url: https://github.com/ros/sdformat_urdf.git
@@ -155,6 +191,35 @@ repositories:
     type: git
     url: https://github.com/ros-controls/realtime_tools.git
     version: jazzy
+  rsl:
+    type: git
+    url: https://github.com/PickNikRobotics/RSL.git
+    version: main
+  tl_expected:
+    type: git
+    url: https://github.com/PickNikRobotics/cpp_polyfills.git
+    version: main
+  filters:
+    type: git
+    url: https://github.com/ros/filters.git
+    version: ros2
+  ackermann_msgs:
+    type: git
+    url: https://github.com/ros-drivers/ackermann_msgs.git
+    version: ros2
+  pal_statistics:
+    type: git
+    url: https://github.com/pal-robotics/pal_statistics.git
+    version: humble-devel
+  vision_msgs:
+    type: git
+    url: https://github.com/ros-perception/vision_msgs.git
+    version: ros2
+  kinematics_interface:
+    type: git
+    url: https://github.com/ros-controls/kinematics_interface.git
+    version: jazzy
+
 
   
 
