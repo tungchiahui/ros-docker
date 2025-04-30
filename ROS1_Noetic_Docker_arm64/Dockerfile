@@ -72,9 +72,9 @@ RUN apt-get update && apt-get install -y \
 
 # 配置rosdep使用镜像源
 RUN echo "# 配置ROS1环境" >> /root/.bashrc
-RUN rosdep init
+RUN mkdir -p /etc/ros/rosdep/sources.list.d/
+RUN curl -o /etc/ros/rosdep/sources.list.d/20-default.list -L https://mirrors.bfsu.edu.cn/github-raw/ros/rosdistro/master/rosdep/sources.list.d/20-default.list
 RUN echo 'export ROSDISTRO_INDEX_URL=https://mirrors.bfsu.edu.cn/rosdistro/index-v4.yaml' >> /root/.bashrc
-RUN rosdep update
 
 
 # 设置环境变量
