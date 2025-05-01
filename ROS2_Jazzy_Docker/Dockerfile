@@ -24,6 +24,7 @@ RUN apt-get update && apt-get install -y \
     usbutils \
     udev \
     hwinfo \
+    libgl1-mesa-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # 配置终端颜色和提示符
@@ -96,6 +97,10 @@ RUN echo 'export ROSDISTRO_INDEX_URL=https://mirrors.bfsu.edu.cn/rosdistro/index
 RUN echo "source /opt/ros/jazzy/setup.bash" >> /root/.bashrc
 RUN echo "export ROS_DOMAIN_ID=6" >> /root/.bashrc
 RUN echo "export GZ_SIM_RESOURCE_PATH=$GZ_SIM_RESOURCE_PATH:/home/tungchiahui/UserFloder/MySource/ROS_WS/gazebo_models:/home/tungchiahui/UserFloder/MySource/ROS_WS/ign_models" >> /root/.bashrc
+
+# 配置clangd必备CMake选项
+RUN mkdir -p /root/.colcon && \
+    echo -e "build:\n  cmake-args:\n    - -DCMAKE_EXPORT_COMPILE_COMMANDS=ON" > /root/.colcon/defaults.yaml
 
 # 启动时默认进入bash shell
 CMD ["bash"]

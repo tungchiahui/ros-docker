@@ -1,5 +1,5 @@
 # 基于NVIDIA官方CUDA 12.6和CuDNN基础镜像
-FROM nvidia/cuda:12.6.0-cudnn-devel-ubuntu24.04
+FROM nvidia/cuda:12.6.0-cudnn-devel-ubuntu22.04
 
 # 设置环境变量以防止交互安装
 ENV DEBIAN_FRONTEND=noninteractive
@@ -11,8 +11,9 @@ SHELL ["/bin/bash", "-c"]
 RUN apt-get update && apt-get install -y ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# 替换为北京外国语大学的DEB822格式镜像源
-RUN sed -i 's|http://archive.ubuntu.com/ubuntu/|https://mirrors.bfsu.edu.cn/ubuntu/|g' /etc/apt/sources.list.d/ubuntu.sources
+# 替换为北京外国语大学的D镜像源
+RUN sed -i 's|http://archive.ubuntu.com/ubuntu/|https://mirrors.bfsu.edu.cn/ubuntu/|g' /etc/apt/sources.list && \
+    sed -i 's|http://security.ubuntu.com/ubuntu/|https://mirrors.bfsu.edu.cn/ubuntu/|g' /etc/apt/sources.list
 
 # 更新包管理器，安装必要工具（locales, software-properties-common, curl, gnupg2）
 RUN apt-get update && apt-get install -y \
@@ -53,31 +54,32 @@ RUN add-apt-repository universe
 
 # 添加ROS 2的密钥和源
 RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] https://mirrors.bfsu.edu.cn/ros2/ubuntu noble main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] https://mirrors.bfsu.edu.cn/ros2/ubuntu jammy main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null
 
-# 更新包管理器并安装ROS 2 Jazzy desktop
+# 更新包管理器并安装ROS 2 Humble desktop
 RUN apt-get update && apt-get install -y \
-    ros-jazzy-desktop \
+    ros-humble-desktop \
     ros-dev-tools \
-    ros-jazzy-xacro \
-    ros-jazzy-joint-state-publisher \
-    ros-jazzy-joint-state-publisher-gui \
-    ros-jazzy-ros-gz \
-    ros-jazzy-diagnostic-updater \
-    ros-jazzy-navigation2 \
-    ros-jazzy-nav2-bringup \
-    ros-jazzy-slam-toolbox \
-    ros-jazzy-cartographer \
-    ros-jazzy-cartographer-ros \
-    ros-jazzy-asio-cmake-module \
-    ros-jazzy-serial-driver \
-    ros-jazzy-pcl-ros \
-    ros-jazzy-pointcloud-to-laserscan \
+    ros-humble-xacro \
+    ros-humble-joint-state-publisher \
+    ros-humble-joint-state-publisher-gui \
+    ros-humble-ros-gz \
+    ros-humble-diagnostic-updater \
+    ros-humble-navigation2 \
+    ros-humble-nav2-bringup \
+    ros-humble-slam-toolbox \
+    ros-humble-cartographer \
+    ros-humble-cartographer-ros \
+    ros-humble-asio-cmake-module \
+    ros-humble-serial-driver \
+    ros-humble-pcl-ros \
+    ros-humble-pointcloud-to-laserscan \
     libpcl-dev \
     libeigen3-dev \
     libpcap-dev \
     python3-colcon-common-extensions \
     && rm -rf /var/lib/apt/lists/*
+
 
 # 配置rosdep使用镜像源
 RUN echo "# 配置ROS2环境" >> /root/.bashrc
@@ -86,9 +88,9 @@ RUN curl -o /etc/ros/rosdep/sources.list.d/20-default.list -L https://mirrors.bf
 RUN echo 'export ROSDISTRO_INDEX_URL=https://mirrors.bfsu.edu.cn/rosdistro/index-v4.yaml' >> /root/.bashrc
 
 # 设置环境变量
-RUN echo "source /opt/ros/jazzy/setup.bash" >> /root/.bashrc
+RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc
 RUN echo "export ROS_DOMAIN_ID=6" >> /root/.bashrc
-RUN echo "export GZ_SIM_RESOURCE_PATH=$GZ_SIM_RESOURCE_PATH:/home/tungchiahui/UserFloder/MySource/ROS_WS/gazebo_models:/home/tungchiahui/UserFloder/MySource/ROS_WS/ign_models" >> /root/.bashrc
+RUN echo "export IGN_GAZEBO_RESOURCE_PATH=$IGN_GAZEBO_RESOURCE_PATH:/home/tungchiahui/UserFloder/MySource/ROS_WS/gazebo_models:/home/tungchiahui/UserFloder/MySource/ROS_WS/ign_models" >> /root/.bashrc
 
 # 配置clangd必备CMake选项
 RUN mkdir -p /root/.colcon && \
@@ -102,7 +104,7 @@ RUN apt-get update && apt-get install -y \
     libavcodec-dev libavformat-dev \
     libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev \
     libswscale-dev libgtk-3-dev libpng-dev libjpeg-dev \
-    libcanberra-gtk-module libcanberra-gtk3-module libv4l-dev python3.12-dev python3-numpy \
+    libcanberra-gtk-module libcanberra-gtk3-module libv4l-dev python3.10-dev python3-numpy \
     && rm -rf /var/lib/apt/lists/*
 
 # 克隆opencv源码
@@ -134,14 +136,14 @@ RUN mkdir /opt/opencv-4.11.0/build && cd /opt/opencv-4.11.0/build && \
             -DWITH_CUBLAS=ON \
             -DCUDA_ARCH_BIN=8.6 \
             -DCUDA_ARCH_PTX=8.6 \
-            -DCUDA_HOST_COMPILER=/usr/bin/gcc-13 \
+            -DCUDA_HOST_COMPILER=/usr/bin/gcc-11 \
             -DWITH_CUDNN=ON \
             -DOPENCV_DNN_CUDA=ON \
             -DWITH_IPP=ON \
             -DWITH_TBB=ON \
             -DWITH_OPENMP=ON \
             -DWITH_PTHREADS_PF=ON \
-            -DOPENCV_PYTHON3_VERSION=3.12 \
+            -DOPENCV_PYTHON3_VERSION=3.10 \
             -DPYTHON3_EXECUTABLE=/usr/bin/python3 \
             -DPYTHON3_LIBRARY=$(python3 -c "import sysconfig; from os.path import join; print(join(sysconfig.get_config_var('LIBDIR'), sysconfig.get_config_var('LDLIBRARY')))") \
             -DPYTHON3_NUMPY_INCLUDE_DIRS=$(python3 -c "import numpy; print(numpy.get_include())") \
@@ -162,14 +164,14 @@ RUN echo "# 设置 LD_LIBRARY_PATH" >> /root/.bashrc
 RUN echo 'export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"' >> /root/.bashrc
 
 WORKDIR /opt
-RUN wget https://ghfast.top/https://github.com/tungchiahui/cv_bridge_fix_link/archive/refs/tags/jazzy.zip -O cv_bridge.zip && \
+RUN wget https://ghfast.top/https://github.com/tungchiahui/cv_bridge_fix_link/archive/refs/tags/humble.zip -O cv_bridge.zip && \
     unzip cv_bridge.zip && \
-    cd ./cv_bridge_fix_link-jazzy && \
-    source /opt/ros/jazzy/setup.bash && \
+    cd ./cv_bridge_fix_link-humble && \
+    source /opt/ros/humble/setup.bash && \
     colcon build --symlink-install
 
 RUN echo '# 配置ROS2 CV_Bridge' >> /root/.bashrc
-RUN echo 'source /opt/cv_bridge_fix_link-jazzy/install/setup.bash' >> /root/.bashrc
+RUN echo 'source /opt/cv_bridge_fix_link-humble/install/setup.bash' >> /root/.bashrc
 
 # 启动时默认进入bash shell
 CMD ["bash"]

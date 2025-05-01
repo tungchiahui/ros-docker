@@ -25,6 +25,7 @@ RUN apt-get update && apt-get install -y \
     usbutils \
     udev \
     hwinfo \
+    libgl1-mesa-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # 配置终端颜色和提示符
@@ -79,15 +80,6 @@ RUN apt-get update && apt-get install -y \
     python3-colcon-common-extensions \
     && rm -rf /var/lib/apt/lists/*
 
-# 安装ROS1 Noetic
-# 添加ROS for Noble的PPA
-RUN add-apt-repository ppa:ros-for-jammy/noetic
-
-# 更新包列表并安装ROS Noetic desktop full
-RUN apt-get update && apt-get install -y \
-    ros-noetic-desktop-full \
-    && rm -rf /var/lib/apt/lists/*
-
 # 启用NVIDIA显卡支持（仅当使用NVIDIA显卡时）
 ENV NVIDIA_VISIBLE_DEVICES=all
 ENV NVIDIA_DRIVER_CAPABILITIES=all
@@ -105,6 +97,10 @@ RUN echo 'export ROSDISTRO_INDEX_URL=https://mirrors.bfsu.edu.cn/rosdistro/index
 RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc
 RUN echo "export ROS_DOMAIN_ID=6" >> /root/.bashrc
 RUN echo "export IGN_GAZEBO_RESOURCE_PATH=$IGN_GAZEBO_RESOURCE_PATH:/home/tungchiahui/UserFloder/MySource/ROS_WS/gazebo_models:/home/tungchiahui/UserFloder/MySource/ROS_WS/ign_models" >> /root/.bashrc
+
+# 配置clangd必备CMake选项
+RUN mkdir -p /root/.colcon && \
+    echo -e "build:\n  cmake-args:\n    - -DCMAKE_EXPORT_COMPILE_COMMANDS=ON" > /root/.colcon/defaults.yaml
 
 # 启动时默认进入bash shell
 CMD ["bash"]

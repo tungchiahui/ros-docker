@@ -27,6 +27,7 @@ RUN apt-get update && apt-get install -y \
     usbutils \
     udev \
     hwinfo \
+    libgl1-mesa-dev \
     libpcl-dev \
     libeigen3-dev \
     libboost-dev \
