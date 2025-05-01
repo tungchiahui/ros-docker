@@ -4,6 +4,9 @@ FROM ubuntu:22.04
 # 设置环境变量以防止交互安装
 ENV DEBIAN_FRONTEND=noninteractive
 
+# 强制使用 Bash 作为默认 Shell
+SHELL ["/bin/bash", "-c"]
+
 # 先更新包列表并安装CA证书
 RUN apt-get update && apt-get install -y ca-certificates \
     && rm -rf /var/lib/apt/lists/*

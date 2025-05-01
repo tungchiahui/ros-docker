@@ -4,6 +4,9 @@ FROM arm64v8/ubuntu:focal
 # 设置非交互式安装以避免tzdata提示
 ENV DEBIAN_FRONTEND=noninteractive
 
+# 强制使用 Bash 作为默认 Shell
+SHELL ["/bin/bash", "-c"]
+
 # 先更新包列表并安装CA证书
 RUN apt-get update && apt-get install -y ca-certificates \
     && rm -rf /var/lib/apt/lists/*
