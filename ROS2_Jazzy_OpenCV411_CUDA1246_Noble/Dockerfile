@@ -1,7 +1,7 @@
 # 支持多架构，使用变量指定架构
 ARG TARGETARCH
 # 基于NVIDIA官方CUDA 12.6和CuDNN基础镜像
-FROM --platform=linux/${TARGETARCH} nvidia/cuda:12.6.0-cudnn-devel-ubuntu24.04
+FROM --platform=linux/${TARGETARCH} nvidia/cuda:12.8.0-cudnn-devel-ubuntu24.04
 
 # 设置环境变量以防止交互安装
 ENV DEBIAN_FRONTEND=noninteractive
@@ -14,9 +14,9 @@ RUN apt-get update && apt-get install -y ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # 替换为北京外国语大学的DEB822格式镜像源
-RUN if [ "$TARGETARCH" = "amd64" ]; then \
+RUN if [ "$(dpkg --print-architecture)" = "amd64" ]; then \
         sed -i 's|http://archive.ubuntu.com/ubuntu/|https://mirrors.bfsu.edu.cn/ubuntu/|g' /etc/apt/sources.list.d/ubuntu.sources; \
-    elif [ "$TARGETARCH" = "arm64" ]; then \
+    elif [ "$(dpkg --print-architecture)" = "arm64" ]; then \
         sed -i 's|http://ports.ubuntu.com/ubuntu-ports/|https://mirrors.bfsu.edu.cn/ubuntu-ports/|g' /etc/apt/sources.list.d/ubuntu.sources; \
     fi
 
@@ -138,8 +138,8 @@ RUN mkdir /opt/opencv-4.11.0/build && cd /opt/opencv-4.11.0/build && \
             -DENABLE_FAST_MATH=ON \
             -DCUDA_FAST_MATH=ON \
             -DWITH_CUBLAS=ON \
-            -DCUDA_ARCH_BIN=6.1;7.2;7.5;8.6;8.7;8.9;12.0 \
-            -DCUDA_ARCH_PTX=12.0 \
+            -DCUDA_ARCH_BIN="6.1;7.2;7.5;8.6;8.7;8.9;12.0" \
+            -DCUDA_ARCH_PTX="12.0" \
             -DCUDA_HOST_COMPILER=/usr/bin/gcc-13 \
             -DWITH_CUDNN=ON \
             -DOPENCV_DNN_CUDA=ON \

@@ -12,7 +12,9 @@ RUN apt-get update && apt-get install -y ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # 替换为北京外国语大学Ubuntu镜像源（AMD64专用）
-RUN sed -i 's|http://archive.ubuntu.com/ubuntu|https://mirrors.bfsu.edu.cn/ubuntu|g' /etc/apt/sources.list
+# 替换为北京外国语大学的镜像源
+RUN sed -i 's|http://archive.ubuntu.com/ubuntu/|https://mirrors.bfsu.edu.cn/ubuntu/|g' /etc/apt/sources.list && \
+    sed -i 's|http://security.ubuntu.com/ubuntu/|https://mirrors.bfsu.edu.cn/ubuntu/|g' /etc/apt/sources.list
 
 # 安装基础工具
 RUN apt-get update && apt-get install -y \

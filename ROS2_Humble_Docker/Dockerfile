@@ -1,5 +1,7 @@
+# 支持多架构，使用变量指定架构
+ARG TARGETARCH
 # 使用Ubuntu 22.04作为基础镜像
-FROM ubuntu:22.04
+FROM --platform=linux/${TARGETARCH} ubuntu:22.04
 
 # 设置环境变量以防止交互安装
 ENV DEBIAN_FRONTEND=noninteractive
@@ -12,8 +14,11 @@ RUN apt-get update && apt-get install -y ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # 替换为北京外国语大学的D镜像源
-RUN sed -i 's|http://archive.ubuntu.com/ubuntu/|https://mirrors.bfsu.edu.cn/ubuntu/|g' /etc/apt/sources.list && \
-    sed -i 's|http://security.ubuntu.com/ubuntu/|https://mirrors.bfsu.edu.cn/ubuntu/|g' /etc/apt/sources.list
+RUN if [ "$(dpkg --print-architecture)" = "amd64" ]; then \
+        sed -i 's|http://archive.ubuntu.com/ubuntu/|https://mirrors.bfsu.edu.cn/ubuntu/|g' /etc/apt/sources.list; \
+    elif [ "$(dpkg --print-architecture)" = "arm64" ]; then \
+        sed -i 's|http://ports.ubuntu.com/ubuntu-ports/|https://mirrors.bfsu.edu.cn/ubuntu-ports/|g' /etc/apt/sources.list; \
+    fi
 
 # 更新包管理器，安装必要工具（locales, software-properties-common, curl, gnupg2）
 RUN apt-get update && apt-get install -y \
