@@ -78,6 +78,7 @@ RUN apt-get update && apt-get install -y \
     ros-jazzy-asio-cmake-module \
     ros-jazzy-serial-driver \
     ros-jazzy-pcl-ros \
+    ros-jazzy-vision-opencv \
     ros-jazzy-pointcloud-to-laserscan \
     libpcl-dev \
     libeigen3-dev \

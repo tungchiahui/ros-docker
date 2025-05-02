@@ -78,6 +78,7 @@ RUN apt-get update && apt-get install -y \
     ros-humble-asio-cmake-module \
     ros-humble-serial-driver \
     ros-humble-pcl-ros \
+    ros-humble-vision-opencv \
     ros-humble-pointcloud-to-laserscan \
     libpcl-dev \
     libeigen3-dev \
@@ -122,39 +123,67 @@ RUN wget https://ghfast.top/https://github.com/opencv/opencv/archive/refs/tags/4
 # CMake编译opencv-cuda
 RUN mkdir /opt/opencv-4.11.0/build && cd /opt/opencv-4.11.0/build && \
     rm -rf ./* && \
-    python3 -c "import sysconfig; from os.path import join; print(join(sysconfig.get_config_var('LIBDIR'), sysconfig.get_config_var('LDLIBRARY')))" && \
-    python3 -c "import numpy; print(numpy.get_include())" && \
-    python3 -c "import sysconfig; print(sysconfig.get_path('purelib'))" && \
-    python3 -c "import sysconfig; print(sysconfig.get_path('include'))" && \
-    cmake .. -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_INSTALL_PREFIX=/usr/local \
-            -DBUILD_SHARED_LIBS=ON \
-            -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-4.11.0/modules \
-            -DOPENCV_ENABLE_NONFREE=ON \
-            -DBUILD_TESTS=OFF \
-            -DBUILD_PERF_TESTS=OFF \
-            -DOPENCV_GENERATE_PKGCONFIG=ON \
-            -DWITH_GTK=ON \
-            -DWITH_CUDA=ON \
-            -DENABLE_FAST_MATH=ON \
-            -DCUDA_FAST_MATH=ON \
-            -DWITH_CUBLAS=ON \
-            -DCUDA_ARCH_BIN="6.1;7.2;7.5;8.6;8.7;8.9;12.0" \
-            -DCUDA_ARCH_PTX="12.0" \
-            -DCUDA_HOST_COMPILER=/usr/bin/gcc-11 \
-            -DWITH_CUDNN=ON \
-            -DOPENCV_DNN_CUDA=ON \
-            -DWITH_IPP=ON \
-            -DWITH_TBB=ON \
-            -DWITH_OPENMP=ON \
-            -DWITH_PTHREADS_PF=ON \
-            -DOPENCV_PYTHON3_VERSION=3.10 \
-            -DPYTHON3_EXECUTABLE=/usr/bin/python3 \
-            -DPYTHON3_LIBRARY=$(python3 -c "import sysconfig; from os.path import join; print(join(sysconfig.get_config_var('LIBDIR'), sysconfig.get_config_var('LDLIBRARY')))") \
-            -DPYTHON3_NUMPY_INCLUDE_DIRS=$(python3 -c "import numpy; print(numpy.get_include())") \
-            -DPYTHON3_PACKAGES_PATH=$(python3 -c "import sysconfig; print(sysconfig.get_path('purelib'))") \
-            -DPYTHON3_INCLUDE_DIR=$(python3 -c "import sysconfig; print(sysconfig.get_path('include'))") \
-            -DWITH_OPENGL=ON
+    if [ "$(dpkg --print-architecture)" = "amd64" ]; then \
+        cmake .. -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=/usr/local \
+        -DBUILD_SHARED_LIBS=ON \
+        -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-4.11.0/modules \
+        -DOPENCV_ENABLE_NONFREE=ON \
+        -DBUILD_TESTS=OFF \
+        -DBUILD_PERF_TESTS=OFF \
+        -DOPENCV_GENERATE_PKGCONFIG=ON \
+        -DWITH_GTK=ON \
+        -DWITH_CUDA=ON \
+        -DENABLE_FAST_MATH=ON \
+        -DCUDA_FAST_MATH=ON \
+        -DWITH_CUBLAS=ON \
+        -DCUDA_ARCH_BIN="6.1;7.5;8.6;8.9;12.0" \
+        -DCUDA_ARCH_PTX="12.0" \
+        -DCUDA_HOST_COMPILER=/usr/bin/gcc-11 \
+        -DWITH_CUDNN=ON \
+        -DOPENCV_DNN_CUDA=ON \
+        -DWITH_IPP=ON \
+        -DWITH_TBB=ON \
+        -DWITH_OPENMP=ON \
+        -DWITH_PTHREADS_PF=ON \
+        -DOPENCV_PYTHON3_VERSION=3.10 \
+        -DPYTHON3_EXECUTABLE=/usr/bin/python3 \
+        -DPYTHON3_LIBRARY=$(python3 -c "import sysconfig; from os.path import join; print(join(sysconfig.get_config_var('LIBDIR'), sysconfig.get_config_var('LDLIBRARY')))") \
+        -DPYTHON3_NUMPY_INCLUDE_DIRS=$(python3 -c "import numpy; print(numpy.get_include())") \
+        -DPYTHON3_PACKAGES_PATH=$(python3 -c "import sysconfig; print(sysconfig.get_path('purelib'))") \
+        -DPYTHON3_INCLUDE_DIR=$(python3 -c "import sysconfig; print(sysconfig.get_path('include'))") \
+        -DWITH_OPENGL=ON; \
+    elif [ "$(dpkg --print-architecture)" = "arm64" ]; then \
+        cmake .. -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=/usr/local \
+        -DBUILD_SHARED_LIBS=ON \
+        -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-4.11.0/modules \
+        -DOPENCV_ENABLE_NONFREE=ON \
+        -DBUILD_TESTS=OFF \
+        -DBUILD_PERF_TESTS=OFF \
+        -DOPENCV_GENERATE_PKGCONFIG=ON \
+        -DWITH_GTK=ON \
+        -DWITH_CUDA=ON \
+        -DENABLE_FAST_MATH=ON \
+        -DCUDA_FAST_MATH=ON \
+        -DWITH_CUBLAS=ON \
+        -DCUDA_ARCH_BIN="7.2;8.7" \
+        -DCUDA_ARCH_PTX="8.7" \
+        -DCUDA_HOST_COMPILER=/usr/bin/gcc-11 \
+        -DWITH_CUDNN=ON \
+        -DOPENCV_DNN_CUDA=ON \
+        -DWITH_IPP=OFF \
+        -DWITH_TBB=ON \
+        -DWITH_OPENMP=ON \
+        -DWITH_PTHREADS_PF=ON \
+        -DOPENCV_PYTHON3_VERSION=3.10 \
+        -DPYTHON3_EXECUTABLE=/usr/bin/python3 \
+        -DPYTHON3_LIBRARY=$(python3 -c "import sysconfig; from os.path import join; print(join(sysconfig.get_config_var('LIBDIR'), sysconfig.get_config_var('LDLIBRARY')))") \
+        -DPYTHON3_NUMPY_INCLUDE_DIRS=$(python3 -c "import numpy; print(numpy.get_include())") \
+        -DPYTHON3_PACKAGES_PATH=$(python3 -c "import sysconfig; print(sysconfig.get_path('purelib'))") \
+        -DPYTHON3_INCLUDE_DIR=$(python3 -c "import sysconfig; print(sysconfig.get_path('include'))") \
+        -DWITH_OPENGL=ON; \
+    fi
 
 # 编译opencv_cuda
 RUN cd /opt/opencv-4.11.0/build && \
@@ -168,12 +197,18 @@ RUN rm -rf /opt/opencv*
 RUN echo "# 设置 LD_LIBRARY_PATH" >> /root/.bashrc
 RUN echo 'export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"' >> /root/.bashrc
 
+RUN apt-get update && apt-get install -y \
+    python3-numpy \
+    libboost-python-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /opt
 RUN wget https://ghfast.top/https://github.com/tungchiahui/cv_bridge_fix_link/archive/refs/tags/humble.zip -O cv_bridge.zip && \
     unzip cv_bridge.zip && \
     cd ./cv_bridge_fix_link-humble && \
     source /opt/ros/humble/setup.bash && \
-    colcon build --symlink-install
+    rosdep update && \
+    colcon build --symlink-install --allow-overriding cv_bridge image_geometry
 
 RUN echo '# 配置ROS2 CV_Bridge' >> /root/.bashrc
 RUN echo 'source /opt/cv_bridge_fix_link-humble/install/setup.bash' >> /root/.bashrc

@@ -11,10 +11,12 @@ SHELL ["/bin/bash", "-c"]
 RUN apt-get update && apt-get install -y ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# 替换为北京外国语大学Ubuntu镜像源（AMD64专用）
 # 替换为北京外国语大学的镜像源
-RUN sed -i 's|http://archive.ubuntu.com/ubuntu/|https://mirrors.bfsu.edu.cn/ubuntu/|g' /etc/apt/sources.list && \
-    sed -i 's|http://security.ubuntu.com/ubuntu/|https://mirrors.bfsu.edu.cn/ubuntu/|g' /etc/apt/sources.list
+RUN if [ "$(dpkg --print-architecture)" = "amd64" ]; then \
+        sed -i 's|http://archive.ubuntu.com/ubuntu/|https://mirrors.bfsu.edu.cn/ubuntu/|g' /etc/apt/sources.list; \
+    elif [ "$(dpkg --print-architecture)" = "arm64" ]; then \
+        sed -i 's|http://ports.ubuntu.com/ubuntu-ports/|https://mirrors.bfsu.edu.cn/ubuntu-ports/|g' /etc/apt/sources.list; \
+    fi
 
 # 安装基础工具
 RUN apt-get update && apt-get install -y \
@@ -70,6 +72,8 @@ RUN apt-get update && apt-get install -y \
     ros-noetic-navigation \
     ros-noetic-moveit \
     ros-noetic-serial \
+    ros-noetic-pointcloud-to-laserscan \
+    ros-noetic-vision-opencv  \
     python3-rosdep \
     python3-rosinstall \
     python3-rosinstall-generator \

@@ -78,6 +78,7 @@ RUN apt-get update && apt-get install -y \
     ros-humble-asio-cmake-module \
     ros-humble-serial-driver \
     ros-humble-pcl-ros \
+    ros-humble-vision-opencv \
     ros-humble-pointcloud-to-laserscan \
     libpcl-dev \
     libeigen3-dev \
