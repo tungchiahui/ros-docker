@@ -200,6 +200,7 @@ RUN echo 'export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"' >> /root/.ba
 RUN apt-get update && apt-get install -y \
     python3-numpy \
     libboost-python-dev \
+    ros-humble-rcpputils \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt

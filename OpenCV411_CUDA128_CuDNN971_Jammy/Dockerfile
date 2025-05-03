@@ -1,6 +1,6 @@
 # 支持多架构，使用变量指定架构
 ARG TARGETARCH
-# 基于NVIDIA官方CUDA 12.6和CuDNN基础镜像
+# 基于NVIDIA官方CUDA 12.8和CuDNN基础镜像
 FROM --platform=linux/${TARGETARCH} nvidia/cuda:12.8.0-cudnn-devel-ubuntu22.04
 
 # 设置环境变量以防止交互安装
@@ -46,7 +46,7 @@ RUN sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /root/.bashrc &&
 
 # 安装必要工具
 RUN apt-get update && apt-get install -y \
-    libcurl4 build-essential pkg-config cmake-gui unzip\
+    libcurl4 build-essential pkg-config cmake-gui unzip wget\
     libopenblas-dev libeigen3-dev libtbb-dev \
     libavcodec-dev libavformat-dev \
     libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev \
