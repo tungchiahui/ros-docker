@@ -56,8 +56,8 @@ RUN apt-get update && apt-get install -y \
 
 # 克隆opencv源码
 WORKDIR /opt
-RUN wget https://ghfast.top/https://github.com/opencv/opencv/archive/refs/tags/4.11.0.zip -O opencv-4.11.0.zip && \
-    wget https://ghfast.top/https://github.com/opencv/opencv_contrib/archive/refs/tags/4.11.0.zip -O opencv_contrib-4.11.0.zip && \
+RUN wget --no-check-certificate https://ghfast.top/https://github.com/opencv/opencv/archive/refs/tags/4.11.0.zip -O opencv-4.11.0.zip && \
+    wget --no-check-certificate https://ghfast.top/https://github.com/opencv/opencv_contrib/archive/refs/tags/4.11.0.zip -O opencv_contrib-4.11.0.zip && \
     unzip opencv-4.11.0.zip && \
     unzip opencv_contrib-4.11.0.zip
 
@@ -80,14 +80,14 @@ RUN mkdir /opt/opencv-4.11.0/build && cd /opt/opencv-4.11.0/build && \
         -DWITH_CUBLAS=ON \
         -DCUDA_ARCH_BIN="6.1;7.5;8.6;8.9;12.0" \
         -DCUDA_ARCH_PTX="12.0" \
-        -DCUDA_HOST_COMPILER=/usr/bin/gcc-11 \
+        -DCUDA_HOST_COMPILER=/usr/bin/gcc-13 \
         -DWITH_CUDNN=ON \
         -DOPENCV_DNN_CUDA=ON \
         -DWITH_IPP=ON \
         -DWITH_TBB=ON \
         -DWITH_OPENMP=ON \
         -DWITH_PTHREADS_PF=ON \
-        -DOPENCV_PYTHON3_VERSION=3.10 \
+        -DOPENCV_PYTHON3_VERSION=3.12 \
         -DPYTHON3_EXECUTABLE=/usr/bin/python3 \
         -DPYTHON3_LIBRARY=$(python3 -c "import sysconfig; from os.path import join; print(join(sysconfig.get_config_var('LIBDIR'), sysconfig.get_config_var('LDLIBRARY')))") \
         -DPYTHON3_NUMPY_INCLUDE_DIRS=$(python3 -c "import numpy; print(numpy.get_include())") \
@@ -110,14 +110,14 @@ RUN mkdir /opt/opencv-4.11.0/build && cd /opt/opencv-4.11.0/build && \
         -DWITH_CUBLAS=ON \
         -DCUDA_ARCH_BIN="7.2;8.7" \
         -DCUDA_ARCH_PTX="8.7" \
-        -DCUDA_HOST_COMPILER=/usr/bin/gcc-11 \
+        -DCUDA_HOST_COMPILER=/usr/bin/gcc-13 \
         -DWITH_CUDNN=ON \
         -DOPENCV_DNN_CUDA=ON \
         -DWITH_IPP=OFF \
         -DWITH_TBB=ON \
         -DWITH_OPENMP=ON \
         -DWITH_PTHREADS_PF=ON \
-        -DOPENCV_PYTHON3_VERSION=3.10 \
+        -DOPENCV_PYTHON3_VERSION=3.12 \
         -DPYTHON3_EXECUTABLE=/usr/bin/python3 \
         -DPYTHON3_LIBRARY=$(python3 -c "import sysconfig; from os.path import join; print(join(sysconfig.get_config_var('LIBDIR'), sysconfig.get_config_var('LDLIBRARY')))") \
         -DPYTHON3_NUMPY_INCLUDE_DIRS=$(python3 -c "import numpy; print(numpy.get_include())") \

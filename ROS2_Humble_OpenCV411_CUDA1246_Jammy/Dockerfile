@@ -1,6 +1,6 @@
 # 支持多架构，使用变量指定架构
 ARG TARGETARCH
-# 基于NVIDIA官方CUDA 12.6和CuDNN基础镜像
+# 基于NVIDIA官方CUDA 12.8和CuDNN基础镜像
 FROM --platform=linux/${TARGETARCH} tungchiahui/opencv:411-cuda128-cudnn971-jammy
 
 # 生成和设置en_US.UTF-8 locale
