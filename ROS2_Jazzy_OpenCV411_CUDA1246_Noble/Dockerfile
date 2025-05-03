@@ -196,21 +196,26 @@ RUN rm -rf /opt/opencv*
 RUN echo "# 设置 LD_LIBRARY_PATH" >> /root/.bashrc
 RUN echo 'export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"' >> /root/.bashrc
 
+# 编译cv_bridge(在arm64上编译报错暂时没找到解决方案)   
 RUN apt-get update && apt-get install -y \
     python3-numpy \
     libboost-python-dev \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt
-RUN wget https://ghfast.top/https://github.com/tungchiahui/cv_bridge_fix_link/archive/refs/tags/jazzy.zip -O cv_bridge.zip && \
-    unzip cv_bridge.zip && \
-    cd ./cv_bridge_fix_link-jazzy && \
-    source /opt/ros/jazzy/setup.bash && \
-    rosdep update && \
-    colcon build --symlink-install --allow-overriding cv_bridge image_geometry
+RUN if [ "$TARGETARCH" = "amd64" ]; then \
+        wget --no-check-certificate https://ghfast.top/https://github.com/tungchiahui/cv_bridge_fix_link/archive/refs/tags/jazzy.zip -O cv_bridge.zip && \
+        unzip cv_bridge.zip && \
+        cd ./cv_bridge_fix_link-jazzy && \
+        source /opt/ros/jazzy/setup.bash && \
+        rosdep update && \
+        colcon build --symlink-install --allow-overriding cv_bridge image_geometry; \
+    fi
 
-RUN echo '# 配置ROS2 CV_Bridge' >> /root/.bashrc
-RUN echo 'source /opt/cv_bridge_fix_link-jazzy/install/setup.bash' >> /root/.bashrc
+RUN if [ "$TARGETARCH" = "amd64" ]; then \
+        echo '# 配置ROS2 CV_Bridge' >> /root/.bashrc && \
+        echo 'source /opt/cv_bridge_fix_link-jazzy/install/setup.bash' >> /root/.bashrc; \
+    fi
 
 # 启动时默认进入bash shell
 CMD ["bash"]
