@@ -75,6 +75,7 @@ RUN if [ "$TARGETARCH" = "amd64" ]; then \
         cd ./cv_bridge_fix_link-humble && \
         source /opt/ros/humble/setup.bash && \
         rosdep update && \
+        rosdep install --from-paths src --ignore-src -y --skip-keys "fastcdr rti-connext-dds-6.0.1 urdfdom_headers" && \
         colcon build --symlink-install --allow-overriding cv_bridge image_geometry; \
     fi
 

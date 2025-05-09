@@ -1,22 +1,8 @@
-# 使用Ubuntu 20.04 AMD64基础镜像
-FROM ubuntu:20.04
+# 支持多架构，使用变量指定架构
+ARG TARGETARCH
+# 基于NVIDIA官方CUDA 12.8和CuDNN基础镜像
+FROM --platform=linux/${TARGETARCH} tungchiahui/opencv:411-cuda128-cudnn970-focal
 
-# 设置非交互式安装以避免tzdata提示
-ENV DEBIAN_FRONTEND=noninteractive
-
-# 强制使用 Bash 作为默认 Shell
-SHELL ["/bin/bash", "-c"]
-
-# 先更新包列表并安装CA证书
-RUN apt-get update && apt-get install -y ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
-
-# 替换为北京外国语大学的镜像源
-RUN if [ "$(dpkg --print-architecture)" = "amd64" ]; then \
-        sed -i 's|http://archive.ubuntu.com/ubuntu/|https://mirrors.bfsu.edu.cn/ubuntu/|g' /etc/apt/sources.list; \
-    elif [ "$(dpkg --print-architecture)" = "arm64" ]; then \
-        sed -i 's|http://ports.ubuntu.com/ubuntu-ports/|https://mirrors.bfsu.edu.cn/ubuntu-ports/|g' /etc/apt/sources.list; \
-    fi
 
 # 安装基础工具
 RUN apt-get update && apt-get install -y \
@@ -36,17 +22,6 @@ RUN apt-get update && apt-get install -y \
     libeigen3-dev \
     libboost-dev \
     && rm -rf /var/lib/apt/lists/*
-
-# 配置终端颜色和提示符
-RUN sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' /root/.bashrc && \
-    # 自定义PS1（带颜色的提示符）
-    echo 'export PS1="\[\033[1;36m\]\u@\h\[\033[00m\]:\[\033[1;34m\]\w\[\033[00m\]\$ "' >> /root/.bashrc && \
-    # 给ls、grep等命令添加别名
-    echo "alias ls='ls --color=auto'" >> /root/.bashrc && \
-    echo "alias grep='grep --color=auto'" >> /root/.bashrc && \
-    echo "alias ll='ls -alFh --color=auto'" >> /root/.bashrc && \
-    # 清理临时文件
-    rm -rf /tmp/LS_COLORS
 
 
 # 添加ROS仓库密钥
@@ -81,13 +56,6 @@ RUN apt-get update && apt-get install -y \
     python3-wstool \
     && rm -rf /var/lib/apt/lists/*
 
-# 启用NVIDIA显卡支持（仅当使用NVIDIA显卡时）
-ENV NVIDIA_VISIBLE_DEVICES=all
-ENV NVIDIA_DRIVER_CAPABILITIES=all
-
-# 设置QT的显示平台为xcb
-# ENV QT_QPA_PLATFORM=xcb
-
 # 配置rosdep使用镜像源
 RUN echo "# 配置ROS1环境" >> /root/.bashrc
 RUN mkdir -p /etc/ros/rosdep/sources.list.d/
@@ -98,6 +66,6 @@ RUN echo 'export ROSDISTRO_INDEX_URL=https://mirrors.bfsu.edu.cn/rosdistro/index
 RUN echo "source /opt/ros/noetic/setup.bash" >> /root/.bashrc
 RUN echo "export ROS_MASTER_URI=http://localhost:11311" >> /root/.bashrc
 RUN echo "export ROS_HOSTNAME=localhost" >> /root/.bashrc
-RUN echo "export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/home/tungchiahui/UserFloder/MySource/ROS_WS/gazebo_models:/home/tungchiahui/UserFloder/MySource/ROS_WS/ign_models" >> /root/.bashrc
+RUN echo "export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/home/tungchiahui/UserFolder/MySource/ROS_WS/gazebo_models:/home/tungchiahui/UserFolder/MySource/ROS_WS/ign_models" >> /root/.bashrc
 
 CMD ["/bin/bash"]
