@@ -3,7 +3,6 @@ ARG TARGETARCH
 # 基于NVIDIA官方CUDA 12.8和CuDNN基础镜像
 FROM --platform=linux/${TARGETARCH} tungchiahui/opencv:411-cuda128-cudnn970-focal
 
-
 # 安装基础工具
 RUN apt-get update && apt-get install -y \
     wget \
@@ -67,5 +66,22 @@ RUN echo "source /opt/ros/noetic/setup.bash" >> /root/.bashrc
 RUN echo "export ROS_MASTER_URI=http://localhost:11311" >> /root/.bashrc
 RUN echo "export ROS_HOSTNAME=localhost" >> /root/.bashrc
 RUN echo "export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/home/tungchiahui/UserFolder/MySource/ROS_WS/gazebo_models:/home/tungchiahui/UserFolder/MySource/ROS_WS/ign_models" >> /root/.bashrc
+
+# 编译cv_bridge 
+RUN apt-get update && apt-get install -y \
+    python3-numpy \
+    libboost-python-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt
+RUN git clone -b noetic https://github.com/tungchiahui/cv_bridge_fix_link.git && \
+    cd ./cv_bridge_fix_link && \
+    source /opt/ros/noetic/setup.bash && \
+    rosdep update && \
+    rosdep install --from-paths src --ignore-src -y --skip-keys "fastcdr rti-connext-dds-6.0.1 urdfdom_headers" && \
+    catkin_make
+    
+RUN echo '# 配置ROS1 CV_Bridge' >> /root/.bashrc && \
+    echo 'source /opt/cv_bridge_fix_link/install/setup.bash' >> /root/.bashrc
 
 CMD ["/bin/bash"]
