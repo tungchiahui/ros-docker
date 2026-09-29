@@ -15,9 +15,9 @@ RUN apt-get update && apt-get install -y ca-certificates \
 
 # 替换为北京外国语大学的D镜像源
 RUN if [ "$(dpkg --print-architecture)" = "amd64" ]; then \
-        sed -i 's|http://archive.ubuntu.com/ubuntu/|https://mirrors.bfsu.edu.cn/ubuntu/|g' /etc/apt/sources.list; \
+        sed -i 's|http://archive.ubuntu.com/ubuntu/|https://mirrors.tuna.tsinghua.edu.cn/ubuntu/|g' /etc/apt/sources.list; \
     elif [ "$(dpkg --print-architecture)" = "arm64" ]; then \
-        sed -i 's|http://ports.ubuntu.com/ubuntu-ports/|https://mirrors.bfsu.edu.cn/ubuntu-ports/|g' /etc/apt/sources.list; \
+        sed -i 's|http://ports.ubuntu.com/ubuntu-ports/|https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/|g' /etc/apt/sources.list; \
     fi
 
 # 更新包管理器，安装必要工具（locales, software-properties-common, curl, gnupg2）
@@ -59,7 +59,7 @@ RUN add-apt-repository universe
 
 # 添加ROS 2的密钥和源
 RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] https://mirrors.bfsu.edu.cn/ros2/ubuntu jammy main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] https://mirrors.tuna.tsinghua.edu.cn/ros2/ubuntu jammy main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null
 
 # 更新包管理器并安装ROS 2 Humble desktop
 RUN apt-get update && apt-get install -y \
@@ -75,6 +75,8 @@ RUN apt-get update && apt-get install -y \
     ros-humble-slam-toolbox \
     ros-humble-cartographer \
     ros-humble-cartographer-ros \
+    ros-humble-joy \
+    ros-humble-joy-linux \
     ros-humble-asio-cmake-module \
     ros-humble-serial-driver \
     ros-humble-pcl-ros \
@@ -83,6 +85,8 @@ RUN apt-get update && apt-get install -y \
     libpcl-dev \
     libeigen3-dev \
     libpcap-dev \
+    libboost-dev \
+    libasio-dev \
     python3-colcon-common-extensions \
     && rm -rf /var/lib/apt/lists/*
 
@@ -96,8 +100,8 @@ ENV NVIDIA_DRIVER_CAPABILITIES=all
 # 配置rosdep使用镜像源
 RUN echo "# 配置ROS2环境" >> /root/.bashrc
 RUN mkdir -p /etc/ros/rosdep/sources.list.d/
-RUN curl -o /etc/ros/rosdep/sources.list.d/20-default.list -L https://mirrors.bfsu.edu.cn/github-raw/ros/rosdistro/master/rosdep/sources.list.d/20-default.list
-RUN echo 'export ROSDISTRO_INDEX_URL=https://mirrors.bfsu.edu.cn/rosdistro/index-v4.yaml' >> /root/.bashrc
+RUN curl -o /etc/ros/rosdep/sources.list.d/20-default.list -L https://mirrors.tuna.tsinghua.edu.cn/github-raw/ros/rosdistro/master/rosdep/sources.list.d/20-default.list
+RUN echo 'export ROSDISTRO_INDEX_URL=https://mirrors.tuna.tsinghua.edu.cn/rosdistro/index-v4.yaml' >> /root/.bashrc
 
 # 设置环境变量
 RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc

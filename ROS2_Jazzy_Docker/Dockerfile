@@ -75,6 +75,8 @@ RUN apt-get update && apt-get install -y \
     ros-jazzy-slam-toolbox \
     ros-jazzy-cartographer \
     ros-jazzy-cartographer-ros \
+    ros-jazzy-joy \
+    ros-jazzy-joy-linux \
     ros-jazzy-asio-cmake-module \
     ros-jazzy-serial-driver \
     ros-jazzy-pcl-ros \
@@ -83,6 +85,8 @@ RUN apt-get update && apt-get install -y \
     libpcl-dev \
     libeigen3-dev \
     libpcap-dev \
+    libboost-dev \
+    libasio-dev \
     python3-colcon-common-extensions \
     && rm -rf /var/lib/apt/lists/*
 
