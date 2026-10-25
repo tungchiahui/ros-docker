@@ -13,7 +13,7 @@ SHELL ["/bin/bash", "-c"]
 RUN apt-get update && apt-get install -y ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# 替换为北京外国语大学的D镜像源
+# 替换为清华大学的镜像源
 RUN if [ "$(dpkg --print-architecture)" = "amd64" ]; then \
         sed -i 's|http://archive.ubuntu.com/ubuntu/|https://mirrors.tuna.tsinghua.edu.cn/ubuntu/|g' /etc/apt/sources.list; \
     elif [ "$(dpkg --print-architecture)" = "arm64" ]; then \
@@ -78,6 +78,8 @@ RUN apt-get update && apt-get install -y \
     ros-humble-slam-toolbox \
     ros-humble-cartographer \
     ros-humble-cartographer-ros \
+    ros-humble-joy \
+    ros-humble-joy-linux \
     ros-humble-asio-cmake-module \
     ros-humble-serial-driver \
     ros-humble-pcl-ros \
@@ -87,6 +89,8 @@ RUN apt-get update && apt-get install -y \
     libpcl-dev \
     libpcap-dev \
     python3-transforms3d \
+    libboost-dev \
+    libasio-dev \
     python3-colcon-common-extensions \
     && rm -rf /var/lib/apt/lists/*
 
