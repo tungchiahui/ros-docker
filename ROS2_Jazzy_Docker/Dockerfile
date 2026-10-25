@@ -68,6 +68,7 @@ RUN apt-get update && apt-get install -y \
     ros-jazzy-xacro \
     ros-jazzy-joint-state-publisher \
     ros-jazzy-joint-state-publisher-gui \
+    ros-humble-tf-transformations \
     ros-jazzy-ros-gz \
     ros-jazzy-diagnostic-updater \
     ros-jazzy-navigation2 \
@@ -75,14 +76,17 @@ RUN apt-get update && apt-get install -y \
     ros-jazzy-slam-toolbox \
     ros-jazzy-cartographer \
     ros-jazzy-cartographer-ros \
+    ros-jazzy-behaviortree-cpp-v3 \
+    ros-jazzy-behaviortree-cpp \
     ros-jazzy-asio-cmake-module \
     ros-jazzy-serial-driver \
     ros-jazzy-pcl-ros \
     ros-jazzy-vision-opencv \
     ros-jazzy-pointcloud-to-laserscan \
-    libpcl-dev \
     libeigen3-dev \
+    libpcl-dev \
     libpcap-dev \
+    python3-transforms3d \
     python3-colcon-common-extensions \
     && rm -rf /var/lib/apt/lists/*
 
