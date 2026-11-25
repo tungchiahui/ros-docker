@@ -1,0 +1,42 @@
+# 支持多架构，使用变量指定架构
+ARG TARGETARCH
+# 基于学长的Ubuntu22.04、ROS2Humble镜像
+FROM --platform=linux/${TARGETARCH} tungchiahui/ros:humble-jammy
+
+# 下方内容为拓展的新内容
+
+# 基础依赖
+RUN apt-get update && apt-get install -y \
+    python3-pip \
+    python3-vcstool \
+    libomp-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# 临时使用清华 PyPI 镜像安装 xmacro
+# 只影响这一条 pip 命令，不修改全局 pip 配置
+RUN pip3 install \
+    -i https://pypi.tuna.tsinghua.edu.cn/simple \
+    xmacro
+
+# 安装livox-sdk2
+WORKDIR /opt
+RUN git clone https://github.com/Livox-SDK/Livox-SDK2.git && \
+    cd ./Livox-SDK2/ && \
+    mkdir build && \
+    cd build && \
+    cmake .. && \
+    make -j$(grep -c ^processor /proc/cpuinfo) && \
+    make install -j$(grep -c ^processor /proc/cpuinfo) && \
+    ldconfig
+
+RUN git clone https://github.com/koide3/small_gicp.git && \
+    cd small_gicp && \
+    mkdir build && \
+    cd build && \
+    cmake .. -DCMAKE_BUILD_TYPE=Release && \
+    make -j$(grep -c ^processor /proc/cpuinfo) && \
+    make install && \
+    ldconfig
+
+# 启动时默认进入bash shell
+CMD ["bash"]
